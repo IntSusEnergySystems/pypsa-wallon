@@ -2240,7 +2240,7 @@ def add_EVs(
     n: pypsa.Network,
     avail_profile: pd.DataFrame,
     dsm_profile: pd.DataFrame,
-    p_set: pd.Series,
+    p_set: pd.DataFrame,
     electric_share: pd.Series,
     number_cars: pd.Series,
     temperature: pd.DataFrame,
@@ -2331,10 +2331,14 @@ def add_EVs(
     p_shifted = (p_set + cycling_shift(p_set, 1) + cycling_shift(p_set, 2)) / 3
     cyclic_eff = p_set.div(p_shifted)
     efficiency *= cyclic_eff
-
+    #all other nodes respect the config file shares while wallon region shares are automaticall
+    #computed from times assuming same efficiencies to keep the original demands
+    profile = p_set.copy()
+    other_nodes = profile.columns.drop("BEWAL", errors='ignore')
+    efficiency = efficiency[other_nodes]
     # Calculate load profile
-    profile = electric_share * p_set.div(efficiency)
-
+    profile[other_nodes] = electric_share[other_nodes] * profile[other_nodes].div(efficiency)
+    profile["BEWAL"] = electric_share["BEWAL"] * profile["BEWAL"]
     # Add EV load
     n.add(
         "Load",
@@ -2399,7 +2403,7 @@ def add_EVs(
 
 def add_fuel_cell_cars(
     n: pypsa.Network,
-    p_set: pd.Series,
+    p_set: pd.DataFrame,
     fuel_cell_share: float,
     temperature: pd.Series,
     options: dict,
@@ -2464,8 +2468,14 @@ def add_fuel_cell_cars(
     )
 
     # Calculate hydrogen demand profile
-    profile = fuel_cell_share * p_set.div(efficiency)
-
+    #all other nodes respect the config file shares while wallon region shares are automatically
+    #computed from times assuming same efficiencies to keep the original demands
+    profile = p_set.copy()
+    other_nodes = profile.columns.drop("BEWAL", errors='ignore')
+    # Calculate load profile
+    efficiency = efficiency[other_nodes]
+    profile[other_nodes] = fuel_cell_share[other_nodes] * profile[other_nodes].div(efficiency)
+    profile["BEWAL"] = fuel_cell_share["BEWAL"] * profile["BEWAL"]
     # Add hydrogen load for fuel cell vehicles
     n.add(
         "Load",
@@ -2555,9 +2565,17 @@ def add_ice_cars(
         options["ICE_lower_degree_factor"],
         options["ICE_upper_degree_factor"],
     )
-
+    
     # Calculate oil demand profile
-    profile = ice_share * p_set.div(efficiency).rename(
+    #all other nodes respect the config file shares while wallon region shares are automatically
+    #computed from times assuming same efficiencies to keep the original demands
+    profile = p_set.copy()
+    other_nodes = profile.columns.drop("BEWAL", errors='ignore')
+    efficiency = efficiency[other_nodes]
+    # Calculate load profile
+    profile[other_nodes] = ice_share[other_nodes] * profile[other_nodes].div(efficiency)
+    profile["BEWAL"] = ice_share["BEWAL"] * profile["BEWAL"]
+    profile = profile.rename(
         columns=lambda x: x + " land transport oil"
     )
 
@@ -2668,46 +2686,65 @@ def add_land_transport(
             logger.info(f"{engine} share: {shares[engine] * 100}%")
 
     check_land_transport_shares(shares)
-
+    demands = pd.read_csv(snakemake.input.wallon_demands, index_col=0)
+    total_share = demands.loc["total road"].iloc[0]
+    elec_val = demands.loc["electricity road"].iloc[0]
+    hydro_val = demands.loc["hydrogen road"].iloc[0]
+    #Initiating automatic computaion for wallon shares based on TIMES demands
+    shares_wal = pd.Series(dtype=float)
+    for engine in engine_types:
+        if engine == "electric":
+            shares_wal[engine] = elec_val / total_share
+        elif engine == "fuel_cell":
+            shares_wal[engine] = hydro_val / total_share
+        elif engine == "ice":
+            shares_wal[engine] = (total_share - elec_val - hydro_val) / total_share
+    shares_per_node = pd.DataFrame(index=engine_types, columns=nodes, dtype=float)
+    for node in nodes:
+     if node == "BEWAL":
+        shares_per_node[node] = shares_wal
+     else:
+        shares_per_node[node] = shares
+    electric_share = shares_per_node.loc["electric"]
+    fuel_cell_share = shares_per_node.loc["fuel_cell"]
+    ice_share = shares_per_node.loc["ice"]
     p_set = transport[nodes]
-
     # temperature for correction factor for heating/cooling
     temperature = xr.open_dataarray(temp_air_total_file).to_pandas()
 
-    if shares["electric"] > 0:
+    if electric_share.sum() > 0:
         add_EVs(
             n,
             avail_profile,
             dsm_profile,
             p_set,
-            shares["electric"],
+            electric_share,
             number_cars,
             temperature,
             spatial,
             options,
         )
 
-    if shares["fuel_cell"] > 0:
+    if fuel_cell_share.sum() > 0:
         add_fuel_cell_cars(
             n=n,
             p_set=p_set,
-            fuel_cell_share=shares["fuel_cell"],
+            fuel_cell_share=fuel_cell_share,
             temperature=temperature,
             options=options,
             spatial=spatial,
         )
-    if shares["ice"] > 0:
+    if ice_share.sum() > 0:
         add_ice_cars(
             n,
             costs,
             p_set,
-            shares["ice"],
+            ice_share,
             temperature,
             cf_industry,
             spatial,
             options,
         )
-
 
 def build_heat_demand(
     n, hourly_heat_demand_file, pop_weighted_energy_totals, heating_efficiencies
@@ -4914,11 +4951,11 @@ def add_industry(
     )
 
     # remove today's industrial electricity demand by scaling down total electricity demand
-    for ct in n.buses.country.dropna().unique():
+    for ct in n.buses[n.buses["carrier"] == "AC"].index:
         # TODO map onto n.bus.country
 
         loads_i = n.loads.index[
-            (n.loads.index.str[:2] == ct) & (n.loads.carrier == "electricity")
+          (n.loads.index == ct) & (n.loads.carrier == "electricity")
         ]
         if n.loads_t.p_set[loads_i].empty:
             continue
@@ -4928,6 +4965,22 @@ def add_industry(
             / n.loads_t.p_set[loads_i].sum().sum()
         )
         n.loads_t.p_set[loads_i] *= factor
+        #Changing wallon electricity and residential demands with TIMES value
+        #subtracting electric demand for space heating and hot water as its already in heating demands
+        wallon_elec = pd.read_csv(snakemake.input.pop_weighted_energy_totals,index_col=0)
+        sum_result = (
+            wallon_elec.loc["BEWAL", ['electricity residential', 'electricity services', 'total rail']].sum()
+            - wallon_elec.loc["BEWAL", [
+                'electricity residential space',
+                'electricity services space',
+                'electricity residential water',
+                'electricity services water',
+              ]].sum()
+        )
+        factor_wal = ((sum_result)
+                    / (n.loads_t.p_set["BEWAL"].sum()/1e6)
+                    )
+        n.loads_t.p_set["BEWAL"] *= factor_wal
 
     n.add(
         "Load",

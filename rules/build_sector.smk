@@ -933,6 +933,7 @@ rule build_industrial_energy_demand_per_node:
         industrial_energy_demand_per_node_today=resources(
             "industrial_energy_demand_today_base_s_{clusters}.csv"
         ),
+        wallon_demands = "data/pypsa_demands_{planning_horizons}.csv",
     output:
         industrial_energy_demand_per_node=resources(
             "industrial_energy_demand_base_s_{clusters}_{planning_horizons}.csv"
@@ -1046,15 +1047,16 @@ rule build_population_weighted_energy_totals:
     input:
         energy_totals=resources("{kind}_totals.csv"),
         clustered_pop_layout=resources("pop_layout_base_s_{clusters}.csv"),
+        wallon_demands = "data/pypsa_demands_{planning_horizons}.csv",
     output:
-        resources("pop_weighted_{kind}_totals_s_{clusters}.csv"),
+        resources("pop_weighted_{kind}_totals_s_{clusters}_{planning_horizons}.csv"),
     threads: 1
     resources:
         mem_mb=2000,
     log:
-        logs("build_population_weighted_{kind}_totals_{clusters}.log"),
+        logs("build_population_weighted_{kind}_totals_{clusters}_{planning_horizons}.log"),
     benchmark:
-        benchmarks("build_population_weighted_{kind}_totals_{clusters}")
+        benchmarks("build_population_weighted_{kind}_totals_{clusters}_{planning_horizons}")
     conda:
         "../envs/environment.yaml"
     script:
@@ -1067,17 +1069,18 @@ rule build_shipping_demand:
         scope=resources("europe_shape.geojson"),
         regions=resources("regions_onshore_base_s_{clusters}.geojson"),
         demand=resources("energy_totals.csv"),
+        wallon_demands = "data/pypsa_demands_{planning_horizons}.csv",
     params:
         energy_totals_year=config_provider("energy", "energy_totals_year"),
     output:
-        resources("shipping_demand_s_{clusters}.csv"),
+        resources("shipping_demand_s_{clusters}_{planning_horizons}.csv"),
     threads: 1
     resources:
         mem_mb=2000,
     log:
-        logs("build_shipping_demand_s_{clusters}.log"),
+        logs("build_shipping_demand_s_{clusters}}_{planning_horizons}.log"),
     benchmark:
-        benchmarks("build_shipping_demand/s_{clusters}")
+        benchmarks("build_shipping_demand/s_{clusters}}_{planning_horizons}")
     conda:
         "../envs/environment.yaml"
     script:
@@ -1093,24 +1096,24 @@ rule build_transport_demand:
     input:
         clustered_pop_layout=resources("pop_layout_base_s_{clusters}.csv"),
         pop_weighted_energy_totals=resources(
-            "pop_weighted_energy_totals_s_{clusters}.csv"
+            "pop_weighted_energy_totals_s_{clusters}_{planning_horizons}.csv"
         ),
         transport_data=resources("transport_data.csv"),
         traffic_data_KFZ="data/bundle/emobility/KFZ__count",
         traffic_data_Pkw="data/bundle/emobility/Pkw__count",
         temp_air_total=resources("temp_air_total_base_s_{clusters}.nc"),
     output:
-        transport_demand=resources("transport_demand_s_{clusters}.csv"),
-        transport_data=resources("transport_data_s_{clusters}.csv"),
-        avail_profile=resources("avail_profile_s_{clusters}.csv"),
-        dsm_profile=resources("dsm_profile_s_{clusters}.csv"),
+        transport_demand=resources("transport_demand_s_{clusters}_{planning_horizons}.csv"),
+        transport_data=resources("transport_data_s_{clusters}_{planning_horizons}.csv"),
+        avail_profile=resources("avail_profile_s_{clusters}_{planning_horizons}.csv"),
+        dsm_profile=resources("dsm_profile_s_{clusters}_{planning_horizons}.csv"),
     threads: 1
     resources:
         mem_mb=2000,
     log:
-        logs("build_transport_demand_s_{clusters}.log"),
+        logs("build_transport_demand_s_{clusters}_{planning_horizons}.log"),
     benchmark:
-        benchmarks("build_transport_demand/s_{clusters}")
+        benchmarks("build_transport_demand/s_{clusters}_{planning_horizons}")
     conda:
         "../envs/environment.yaml"
     script:
@@ -1150,7 +1153,7 @@ rule build_existing_heating_distribution:
         existing_heating="data/existing_infrastructure/existing_heating_raw.csv",
         clustered_pop_layout=resources("pop_layout_base_s_{clusters}.csv"),
         clustered_pop_energy_layout=resources(
-            "pop_weighted_energy_totals_s_{clusters}.csv"
+            "pop_weighted_energy_totals_s_{clusters}_{planning_horizons}.csv"
         ),
         district_heat_share=resources(
             "district_heat_share_base_s_{clusters}_{planning_horizons}.csv"
@@ -1333,14 +1336,15 @@ rule prepare_sector_network:
         network=resources("networks/base_s_{clusters}_elec_{opts}.nc"),
         eurostat="data/eurostat/Balances-April2023",
         pop_weighted_energy_totals=resources(
-            "pop_weighted_energy_totals_s_{clusters}.csv"
+            "pop_weighted_energy_totals_s_{clusters}_{planning_horizons}.csv"
         ),
-        pop_weighted_heat_totals=resources("pop_weighted_heat_totals_s_{clusters}.csv"),
-        shipping_demand=resources("shipping_demand_s_{clusters}.csv"),
-        transport_demand=resources("transport_demand_s_{clusters}.csv"),
-        transport_data=resources("transport_data_s_{clusters}.csv"),
-        avail_profile=resources("avail_profile_s_{clusters}.csv"),
-        dsm_profile=resources("dsm_profile_s_{clusters}.csv"),
+        wallon_demands = "data/pypsa_demands_{planning_horizons}.csv",
+        pop_weighted_heat_totals=resources("pop_weighted_heat_totals_s_{clusters}_{planning_horizons}.csv"),
+        shipping_demand=resources("shipping_demand_s_{clusters}_{planning_horizons}.csv"),
+        transport_demand=resources("transport_demand_s_{clusters}_{planning_horizons}.csv"),
+        transport_data=resources("transport_data_s_{clusters}_{planning_horizons}.csv"),
+        avail_profile=resources("avail_profile_s_{clusters}_{planning_horizons}.csv"),
+        dsm_profile=resources("dsm_profile_s_{clusters}_{planning_horizons}.csv"),
         co2_totals_name=resources("co2_totals.csv"),
         co2="data/bundle/eea/UNFCCC_v23.csv",
         biomass_potentials=resources(

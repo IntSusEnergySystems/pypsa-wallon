@@ -22,7 +22,6 @@ gurobi.log
 /benchmarks
 /logs
 /notebooks
-/data
 /cutouts
 /tmp
 doc/_build
@@ -36,6 +35,7 @@ config/config.yaml
 config/scenarios.yaml
 
 dconf
+/data/bundle*
 /data/links_p_nom.csv
 /data/*totals.csv
 /data/biomass*
@@ -51,6 +51,26 @@ dconf
 /data/bundle/nuts*
 data/gas_network/scigrid-gas/
 data/costs_*.csv
+data/CO2JRC_OpenFormats
+data/eez
+data/jrc-ardeco
+data/jrc-idees-2021
+data/nuts
+data/worldbank
+data/eurostat
+data/shipdensity_global.zip
+data/jrc-idees-2021.zip
+data/gas_network
+data/gem
+data/osm-boundaries
+data/osm-prebuilt
+data/transmission_projects
+data/entsoegridkit
+data/existing_infrastructure
+data/walloon
+data/load_synthetic_raw.csv
+data/electricity_demand_raw.csv
+data/Industrial_Database.csv
 
 dask-worker-space/
 publications.jrc.ec.europa.eu/
