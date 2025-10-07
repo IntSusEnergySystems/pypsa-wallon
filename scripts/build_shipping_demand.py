@@ -30,7 +30,7 @@ if __name__ == "__main__":
         "total international navigation"
     ]
     demand = demand.xs(snakemake.params.energy_totals_year, level=1)
-    wallon_demands = pd.read_csv(snakemake.input.wallon_demands, index_col=0)
+    wallon_demands = pd.read_csv(snakemake.input.wallon_demands, index_col=0)[["TWh"]]
     # read port data into GeoDataFrame
     with open(snakemake.input.ports, encoding="latin_1") as f:
         ports = json.load(f)

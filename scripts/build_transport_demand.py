@@ -74,8 +74,8 @@ def build_transport_demand(traffic_fn, airtemp_fn, nodes, nodal_transport_data):
     # unit TWh
     energy_totals_transport = (
         pop_weighted_energy_totals["total road"]
-        + pop_weighted_energy_totals["total rail"]
-        - pop_weighted_energy_totals["electricity rail"]
+        + pop_weighted_energy_totals["total rail"].where(pop_weighted_energy_totals.index != "BEWAL", 0)
+        - pop_weighted_energy_totals["electricity rail"].where(pop_weighted_energy_totals.index != "BEWAL", 0)
     )
     # average fuel efficiency in MWh/100 km
     eff = nodal_transport_data["average fuel efficiency"]

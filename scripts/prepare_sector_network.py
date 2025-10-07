@@ -2686,7 +2686,7 @@ def add_land_transport(
             logger.info(f"{engine} share: {shares[engine] * 100}%")
 
     check_land_transport_shares(shares)
-    demands = pd.read_csv(snakemake.input.wallon_demands, index_col=0)
+    demands = pd.read_csv(snakemake.input.wallon_demands, index_col=0)[["TWh"]]
     total_share = demands.loc["total road"].iloc[0]
     elec_val = demands.loc["electricity road"].iloc[0]
     hydro_val = demands.loc["hydrogen road"].iloc[0]

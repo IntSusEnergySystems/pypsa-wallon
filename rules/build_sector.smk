@@ -24,9 +24,33 @@ rule build_population_layouts:
     script:
         "../scripts/build_population_layouts.py"
 
+years = [2025, 2030, 2035, 2040, 2045, 2050]      
+rule build_wallon_demands:
+    params:
+        study=config_provider("run", "name"),  
+    input:
+        pop_layout_rural=resources("pop_layout_rural.nc"),
+        vd_file="data/bau_080925_0809.vd",
+        process_mapping_file="data/mapping_processes.csv",
+        mapping_file="data/mapping_commodities.csv",
+    output:
+        pypsa_demands=expand(resources("pypsa_demands_{year}.csv"), year=years), 
+    log:
+        logs("build_wallon_demands.log"),
+    resources:
+        mem_mb=20000,
+    benchmark:
+        benchmarks("build_wallon_demands")
+    threads: 8
+    conda:
+        "../envs/environment.yaml"
+    script:
+        "../scripts/build_wallon_demands.py"
+
 
 rule build_clustered_population_layouts:
     input:
+        pypsa_demands=resources("pypsa_demands_2050.csv"),
         pop_layout_total=resources("pop_layout_total.nc"),
         pop_layout_urban=resources("pop_layout_urban.nc"),
         pop_layout_rural=resources("pop_layout_rural.nc"),
@@ -933,7 +957,7 @@ rule build_industrial_energy_demand_per_node:
         industrial_energy_demand_per_node_today=resources(
             "industrial_energy_demand_today_base_s_{clusters}.csv"
         ),
-        wallon_demands = "data/pypsa_demands_{planning_horizons}.csv",
+        wallon_demands = resources("pypsa_demands_{planning_horizons}.csv"),
     output:
         industrial_energy_demand_per_node=resources(
             "industrial_energy_demand_base_s_{clusters}_{planning_horizons}.csv"
@@ -1047,7 +1071,7 @@ rule build_population_weighted_energy_totals:
     input:
         energy_totals=resources("{kind}_totals.csv"),
         clustered_pop_layout=resources("pop_layout_base_s_{clusters}.csv"),
-        wallon_demands = "data/pypsa_demands_{planning_horizons}.csv",
+        wallon_demands = resources("pypsa_demands_{planning_horizons}.csv"),
     output:
         resources("pop_weighted_{kind}_totals_s_{clusters}_{planning_horizons}.csv"),
     threads: 1
@@ -1069,7 +1093,7 @@ rule build_shipping_demand:
         scope=resources("europe_shape.geojson"),
         regions=resources("regions_onshore_base_s_{clusters}.geojson"),
         demand=resources("energy_totals.csv"),
-        wallon_demands = "data/pypsa_demands_{planning_horizons}.csv",
+        wallon_demands = resources("pypsa_demands_{planning_horizons}.csv"),
     params:
         energy_totals_year=config_provider("energy", "energy_totals_year"),
     output:
@@ -1338,7 +1362,7 @@ rule prepare_sector_network:
         pop_weighted_energy_totals=resources(
             "pop_weighted_energy_totals_s_{clusters}_{planning_horizons}.csv"
         ),
-        wallon_demands = "data/pypsa_demands_{planning_horizons}.csv",
+        wallon_demands = resources("pypsa_demands_{planning_horizons}.csv"),
         pop_weighted_heat_totals=resources("pop_weighted_heat_totals_s_{clusters}_{planning_horizons}.csv"),
         shipping_demand=resources("shipping_demand_s_{clusters}_{planning_horizons}.csv"),
         transport_demand=resources("transport_demand_s_{clusters}_{planning_horizons}.csv"),

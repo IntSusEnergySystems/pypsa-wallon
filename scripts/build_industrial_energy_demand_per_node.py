@@ -50,7 +50,7 @@ if __name__ == "__main__":
     # material demand per node and industry (Mton/a)
     fn = snakemake.input.industrial_production_per_node
     nodal_production = pd.read_csv(fn, index_col=0) / 1e3
-    wallon_demands = pd.read_csv(snakemake.input.wallon_demands, index_col=0)
+    wallon_demands = pd.read_csv(snakemake.input.wallon_demands, index_col=0)[["TWh"]]
     # energy demand today to get current electricity
     fn = snakemake.input.industrial_energy_demand_per_node_today
     nodal_today = pd.read_csv(fn, index_col=0)

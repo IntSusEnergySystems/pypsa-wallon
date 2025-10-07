@@ -47,9 +47,10 @@ if __name__ == "__main__":
     nodal_totals.index = pop_layout.index
     nodal_totals = nodal_totals.multiply(pop_layout.fraction, axis=0)
     #Adding wallon region international navigation demand to Flanders
-    wal_int_nav = nodal_totals.loc["BEWAL", "total international navigation"]
-    nodal_totals.loc["BEVLG", "total international navigation"] += wal_int_nav
-    wallon_demands = pd.read_csv(snakemake.input.wallon_demands, index_col=0)
+    if snakemake.wildcards.kind != "heat":
+     wal_int_nav = nodal_totals.loc["BEWAL", "total international navigation"]
+     nodal_totals.loc["BEVLG", "total international navigation"] += wal_int_nav
+    wallon_demands = pd.read_csv(snakemake.input.wallon_demands, index_col=0)[["TWh"]]
     common_cols = nodal_totals.columns.intersection(wallon_demands.index)
     extract_demands = wallon_demands.loc[common_cols].squeeze()
     nodal_totals.loc["BEWAL", common_cols] = extract_demands
