@@ -577,10 +577,10 @@ def extract_pypsa_demands(annual_values_df, processes_df, commodities_mapping_df
     
     # Build process to aggregation mapping
     process_agg_map = {}
-    if 'Process' in processes_df.columns and 'Aggregation Level 1' in processes_df.columns:
+    if 'Process' in processes_df.columns and 'Aggregation Level 2' in processes_df.columns:
         for _, row in processes_df.iterrows():
             proc = str(row['Process']).strip()
-            agg = str(row.get('Aggregation Level 1', '')).strip()
+            agg = str(row.get('Aggregation Level 2', '')).strip()
             if agg and agg.lower() not in ['nan', '']:
                 process_agg_map[proc] = agg
     
@@ -624,12 +624,8 @@ def extract_pypsa_demands(annual_values_df, processes_df, commodities_mapping_df
     
     extraction_rules = {
         # Electricity categories (filtered by BOTH process AND pypsa_carrier)
-        'electricity residential': ('VAR_FIN', 'combined', [('process_agg', ['residential other']), ('pypsa_carrier', ['Electricity', 'electricity for residential'])]),
-        'electricity residential space': ('VAR_FIN', 'combined', [('process_agg', ['residential space heating']), ('pypsa_carrier', ['Electricity', 'electricity for residential'])]),
-        'electricity residential water': ('VAR_FIN', 'combined', [('process_agg', ['residential hot water']), ('pypsa_carrier', ['Electricity', 'electricity for residential'])]),
-        'electricity services': ('VAR_FIN', 'combined', [('process_agg', ['commercial other']), ('pypsa_carrier', ['Electricity'])]),
-        'electricity services space': ('VAR_FIN', 'combined', [('process_agg', ['commercial space heating']), ('pypsa_carrier', ['Electricity'])]),
-        'electricity services water': ('VAR_FIN', 'combined', [('process_agg', ['commercial hot water']), ('pypsa_carrier', ['Electricity'])]),
+        'total electricity residential': ('VAR_FIN', 'combined', [('process_agg', ['residential other']), ('pypsa_carrier', ['Electricity', 'electricity for residential'])]),
+        'total electricity services': ('VAR_FIN', 'combined', [('process_agg', ['commercial other']), ('pypsa_carrier', ['Electricity'])]),
         'electricity road': ('VAR_FIN', 'combined', [('process_agg', ['EV charger']), ('pypsa_carrier', ['Electricity'])]),
         'electricity rail': ('VAR_FIN', 'combined', [('process_agg', ['rail transport']), ('pypsa_carrier', ['Electricity'])]),
         
@@ -660,15 +656,30 @@ def extract_pypsa_demands(annual_values_df, processes_df, commodities_mapping_df
         'total road': ('VAR_FIN', 'process_agg', ['Cars', 'Road Freight', '2 and 3 wheelers', 'Road transport (public)']),
         'total rail': ('VAR_FIN', 'process_agg', ['rail transport']),
         'hydrogen road': ('VAR_FIN', 'combined', [('process_agg', ['Cars', 'Road Freight', '2 and 3 wheelers', 'Road transport (public)']), ('pypsa_carrier', ['H2 for transport'])]),
-
         
-        # Residential and services totals
-        'total residential': ('VAR_FIN', 'process_agg', ['residential space heating', 'residential hot water', 'residential other', 'residential cooking']),
-        'total residential space': ('VAR_FIN', 'process_agg', ['residential space heating']),
-        'total residential water': ('VAR_FIN', 'process_agg', ['residential hot water']),
-        'total services': ('VAR_FIN', 'process_agg', ['commercial space heating', 'commercial hot water', 'commercial other', 'commercial cooking']),
-        'total services space': ('VAR_FIN', 'process_agg', ['commercial space heating']),
-        'total services water': ('VAR_FIN', 'process_agg', ['commercial hot water']),
+        #Heating Demands total for residential and tertiary
+        'BEWAL residential urban decentral heat': ('VAR_FOut','combined', [('process_agg', ['Residential Coal heater','Residential electric heater','Residential  Heat pump','Residential geothermal heating','Residential gas heater','Residential biomass heater','Residential solar thermal','Residential oil heater']),('pypsa_carrier', ['Heat'])]),
+        'BEWAL services urban decentral heat': ('VAR_FOut', 'combined', [('process_agg', ['Commercial gas boiler','Commercial Biomass boiler','Commercial Heat pump','Commercial Oil boiler','commercial Geothermal','Commercial electrical stove','Commercial solar thermal']), ('pypsa_carrier', ['Heat'])]),
+        
+        #Compute heating technology capacities and output
+        'residential gas boiler': ('VAR_FOut', 'combined', [('process_agg', ['Residential gas heater']), ('pypsa_carrier', ['Heat'])]),
+        'residential coal boiler': ('VAR_FOut', 'combined', [('process_agg', ['Residential Coal heater']), ('pypsa_carrier', ['Heat'])]),
+        'residential electric heater': ('VAR_FOut', 'combined', [('process_agg', ['Residential electric heater']), ('pypsa_carrier', ['Heat'])]),
+        'residential heat pump': ('VAR_FOut', 'combined', [('process_agg', ['Residential  Heat pump']), ('pypsa_carrier', ['Heat'])]),
+        'residential geothermal': ('VAR_FOut', 'combined', [('process_agg', ['Residential geothermal heating']), ('pypsa_carrier', ['Heat'])]),
+        'residential district heating': ('VAR_FOut', 'combined', [('process_agg', ['District heating']), ('pypsa_carrier', ['Heat'])]),
+        'residential biomass boiler': ('VAR_FOut', 'combined', [('process_agg', ['Residential biomass heater']), ('pypsa_carrier', ['Heat'])]),
+        'residential solar thermal': ('VAR_FOut', 'combined', [('process_agg', ['Residential solar thermal']), ('pypsa_carrier', ['Heat'])]),
+        'residential oil boiler': ('VAR_FOut', 'combined', [('process_agg', ['Residential oil heater']), ('pypsa_carrier', ['Heat'])]),
+        #Commercial
+        'services gas boiler': ('VAR_FOut', 'combined', [('process_agg', ['Commercial gas boiler']), ('pypsa_carrier', ['Heat'])]),
+        'services biomass boiler': ('VAR_FOut', 'combined', [('process_agg', ['Commercial Biomass boiler']), ('pypsa_carrier', ['Heat'])]),
+        'services heat pump': ('VAR_FOut', 'combined', [('process_agg', ['Commercial Heat pump']), ('pypsa_carrier', ['Heat'])]),
+        'services district heating': ('VAR_FOut', 'combined', [('process_agg', ['Commercial Heat Exchanger']), ('pypsa_carrier', ['Heat'])]),
+        'services oil boiler': ('VAR_FOut', 'combined', [('process_agg', ['Commercial Oil boiler']), ('pypsa_carrier', ['Heat'])]),
+        'services geothermal': ('VAR_FOut', 'combined', [('process_agg', ['commercial Geothermal']), ('pypsa_carrier', ['Heat'])]),
+        'services electric heater': ('VAR_FOut', 'combined', [('process_agg', ['Commercial electrical stove']), ('pypsa_carrier', ['Heat'])]),
+        'services solar thermal': ('VAR_FOut', 'combined', [('process_agg', ['Commercial solar thermal']), ('pypsa_carrier', ['Heat'])]),
     }
     
     # Process each year - use all available years in the data
@@ -751,11 +762,17 @@ def extract_pypsa_demands(annual_values_df, processes_df, commodities_mapping_df
             # Sum the values and convert PJ to TWh (1 PJ = 0.277778 TWh)
             total_pj = filtered_df['value'].sum()
             total_twh = total_pj * 0.277778
-            
+            heating_keywords = ['boiler', 'heater', 'heat pump', 'geothermal', 'solar thermal', 'district heating']
+            if any(keyword in category.lower() for keyword in heating_keywords):
+               # 1 PJ/year = 31.7 MW
+               total_mw = total_pj * 31.7
+            else:
+               total_mw = 0.0
             results.append({
                 'category': category,
                 'TWh': total_twh,
-                'PJ': total_pj
+                'PJ': total_pj,
+                'MW': total_mw
             })
         
         # Save to CSV
@@ -889,7 +906,7 @@ def main():
         group_commodities = True
         # Column in mapping_processes.csv used for process aggregation
         process_cluster_column = "PyPSA technology"
-        process_cluster_column = "Aggregation Level 1"
+        process_cluster_column = "Aggregation Level 2"
     else:
         # Set to False to build unclustered Sankey
         enable_process_clustering = False
@@ -899,7 +916,7 @@ def main():
         netting = False
 
     # Netting is only applicable to Aggregation Level 1
-    if process_cluster_column == "Aggregation Level 1":
+    if process_cluster_column == "Aggregation Level 2":
         netting = True
     else:
         netting = False

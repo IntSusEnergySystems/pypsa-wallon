@@ -2805,7 +2805,7 @@ def build_heat_demand(
     electric_heat_supply = pd.concat(electric_heat_supply, axis=1)
 
     # subtract from electricity load since heat demand already in heat_demand
-    electric_nodes = n.loads.index[n.loads.carrier == "electricity"]
+    electric_nodes = n.loads.index[n.loads.carrier == "electricity"].drop("BEWAL")
     n.loads_t.p_set[electric_nodes] = (
         n.loads_t.p_set[electric_nodes]
         - electric_heat_supply.T.groupby(level=1).sum().T[electric_nodes]
@@ -2999,7 +2999,7 @@ def add_heat(
                     factor * (1 + options["district_heating"]["district_heating_loss"])
                 )
             )
-
+            
         n.add(
             "Load",
             nodes,
@@ -3008,7 +3008,7 @@ def add_heat(
             carrier=f"{heat_system} heat",
             p_set=heat_load.loc[n.snapshots],
         )
-
+        
         if options["tes"]:
             n.add("Carrier", f"{heat_system} water tanks")
 
@@ -3642,6 +3642,43 @@ def add_heat(
                     capital_cost=capital_cost[strength]
                     * options["retrofitting"]["cost_factor"],
                 )
+
+def write_wallon_heat_demands(
+    n: pypsa.Network,
+):
+    #Cleaning all components assigned to wallon region rural categories
+    patterns = ["BEWAL residential rural", "BEWAL services rural"]
+    components = ["carriers", "buses", "loads", "links", "generators"]
+    for comp in components:
+        df = getattr(n, comp)
+        mask = ~df.index.str.contains("|".join(patterns), case=False, na=False)
+        setattr(n, comp, df[mask])
+
+    ##Droping heat demands for wallon region as they are assigned to a single heat demand 
+    n.loads_t.p_set = n.loads_t.p_set.drop(
+    columns=["BEWAL residential rural heat", "BEWAL services rural heat"]
+    )    
+    #Assigning wallon heat demands
+    wallon_heat = pd.read_csv(snakemake.input.wallon_demands, index_col=0)[["TWh"]]
+    # Assigning wallon heat demands to a single category for residential and tertiary sectors 
+    heat_categories = [
+    "BEWAL residential urban decentral heat",
+    "BEWAL services urban decentral heat"]
+    for heat_demand in heat_categories:
+       target_heat = wallon_heat.loc[[heat_demand], "TWh"].sum()
+       factor = target_heat / (n.loads_t.p_set[heat_demand].sum() / 1e6)
+        # Consider the shape or timeseries profile to conert annual heat demand for wallon in hourly timeseries
+       n.loads_t.p_set[heat_demand] *= factor
+
+    dist_categories = [
+    "residential district heating",
+    "services district heating"]
+    #Adjust district heating demand from TIMES
+    total_district_heat = wallon_heat.loc[dist_categories, "TWh"].sum()
+    factor = total_district_heat / (n.loads_t.p_set["BEWAL urban central heat"].sum() / 1e6)
+    n.loads_t.p_set["BEWAL urban central heat"] *= factor
+    
+    return n
 
 
 def add_methanol(
@@ -4967,16 +5004,10 @@ def add_industry(
         n.loads_t.p_set[loads_i] *= factor
         #Changing wallon electricity and residential demands with TIMES value
         #subtracting electric demand for space heating and hot water as its already in heating demands
-        wallon_elec = pd.read_csv(snakemake.input.pop_weighted_energy_totals,index_col=0)
-        sum_result = (
-            wallon_elec.loc["BEWAL", ['electricity residential', 'electricity services', 'total rail']].sum()
-            - wallon_elec.loc["BEWAL", [
-                'electricity residential space',
-                'electricity services space',
-                'electricity residential water',
-                'electricity services water',
-              ]].sum()
-        )
+        wallon_elec = pd.read_csv(snakemake.input.wallon_demands,index_col=0)[["TWh"]]
+        sum_result = wallon_elec.loc[
+                   ['total electricity residential', 'total electricity services', 'total rail'], 'TWh'
+                   ].sum()
         factor_wal = ((sum_result)
                     / (n.loads_t.p_set["BEWAL"].sum()/1e6)
                     )
@@ -6413,6 +6444,7 @@ if __name__ == "__main__":
             options=options,
             investment_year=investment_year,
         )
+    write_wallon_heat_demands(n=n)
 
     if options["biomass"]:
         add_biomass(
