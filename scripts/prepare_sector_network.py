@@ -3648,16 +3648,19 @@ def write_wallon_heat_demands(
 ):
     #Cleaning all components assigned to wallon region rural categories
     patterns = ["BEWAL residential rural", "BEWAL services rural"]
-    components = ["carriers", "buses", "loads", "links", "generators"]
+    components = ["carriers", "buses", "loads", "links", "generators", "stores"]
     for comp in components:
         df = getattr(n, comp)
         mask = ~df.index.str.contains("|".join(patterns), case=False, na=False)
         setattr(n, comp, df[mask])
+        
+    for comp_t_name in [attr for attr in dir(n) if attr.endswith("_t")]:
+     comp_t = getattr(n, comp_t_name)
+     for df_name, df in comp_t.items():
+        cols_to_drop = [c for c in df.columns if any(pat.lower() in c.lower() for pat in patterns)]
+        if cols_to_drop:
+            comp_t[df_name] = df.drop(columns=cols_to_drop)
 
-    ##Droping heat demands for wallon region as they are assigned to a single heat demand 
-    n.loads_t.p_set = n.loads_t.p_set.drop(
-    columns=["BEWAL residential rural heat", "BEWAL services rural heat"]
-    )    
     #Assigning wallon heat demands
     wallon_heat = pd.read_csv(snakemake.input.wallon_demands, index_col=0)[["TWh"]]
     # Assigning wallon heat demands to a single category for residential and tertiary sectors 
@@ -3677,6 +3680,8 @@ def write_wallon_heat_demands(
     total_district_heat = wallon_heat.loc[dist_categories, "TWh"].sum()
     factor = total_district_heat / (n.loads_t.p_set["BEWAL urban central heat"].sum() / 1e6)
     n.loads_t.p_set["BEWAL urban central heat"] *= factor
+    #Changing bus of agriculture heat 
+    n.loads.loc["BEWAL agriculture heat", "bus"] = "BEWAL services urban decentral heat"
     
     return n
 
@@ -6444,7 +6449,6 @@ if __name__ == "__main__":
             options=options,
             investment_year=investment_year,
         )
-    write_wallon_heat_demands(n=n)
 
     if options["biomass"]:
         add_biomass(
@@ -6513,7 +6517,7 @@ if __name__ == "__main__":
             options,
             spatial,
         )
-
+    write_wallon_heat_demands(n=n)
     if options["dac"]:
         add_dac(n, costs)
 
