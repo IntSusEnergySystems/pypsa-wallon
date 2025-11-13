@@ -30,6 +30,7 @@ from scripts.add_electricity import sanitize_carriers
 from scripts.build_energy_totals import cartesian
 from scripts.definitions.heat_system import HeatSystem
 from scripts.prepare_sector_network import cluster_heat_buses, define_spatial
+from scripts.walloon_scripts.nuclear_helper import add_BEWAL_nuclear
 
 logger = logging.getLogger(__name__)
 cc = coco.CountryConverter()

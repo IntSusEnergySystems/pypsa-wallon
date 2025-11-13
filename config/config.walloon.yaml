@@ -77,3 +77,6 @@ clustering:
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#sector
 sector:
   oil_boilers: true
+
+costs:
+  custom_cost_fn: data/walloon/custom_costs_rc.csv
