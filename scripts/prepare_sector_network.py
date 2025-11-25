@@ -1273,7 +1273,7 @@ def add_co2limit(n, options, co2_totals_file, countries, nyears, limit):
 
     # convert Mt to tCO2
     co2_totals = 1e6 * pd.read_csv(co2_totals_file, index_col=0)
-
+    co2_totals = co2_totals.groupby(co2_totals.index.str[:2]).sum()
     co2_limit = co2_totals.loc[countries, sectors].sum().sum()
 
     co2_limit *= limit * nyears

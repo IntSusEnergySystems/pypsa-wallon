@@ -823,6 +823,7 @@ rule build_energy_totals:
     params:
         countries=config_provider("countries"),
         energy=config_provider("energy"),
+        study=config_provider("run","name"),
     input:
         nuts3_shapes=resources("nuts3_shapes.geojson"),
         co2="data/bundle/eea/UNFCCC_v23.csv",
@@ -832,20 +833,21 @@ rule build_energy_totals:
         district_heat_share="data/district_heat_share.csv",
         eurostat="data/eurostat/Balances-April2023",
         eurostat_households="data/eurostat/eurostat-household_energy_balances-february_2024.csv",
+        clustered_pop_layout=resources("pop_layout_base_s_{clusters}.csv"),
     output:
-        transformation_output_coke=resources("transformation_output_coke.csv"),
-        energy_name=resources("energy_totals.csv"),
-        co2_name=resources("co2_totals.csv"),
-        transport_name=resources("transport_data.csv"),
-        district_heat_share=resources("district_heat_share.csv"),
-        heating_efficiencies=resources("heating_efficiencies.csv"),
+        transformation_output_coke=resources("transformation_output_coke_{clusters}.csv"),
+        energy_name=resources("energy_totals_{clusters}.csv"),
+        co2_name=resources("co2_totals_{clusters}.csv"),
+        transport_name=resources("transport_data_{clusters}.csv"),
+        district_heat_share=resources("district_heat_share_{clusters}.csv"),
+        heating_efficiencies=resources("heating_efficiencies_{clusters}.csv"),
     threads: 16
     resources:
         mem_mb=10000,
     log:
-        logs("build_energy_totals.log"),
+        logs("build_energy_totals_{clusters}.log"),
     benchmark:
-        benchmarks("build_energy_totals")
+        benchmarks("build_energy_totals_{clusters}")
     conda:
         "../envs/environment.yaml"
     script:
@@ -855,16 +857,16 @@ rule build_energy_totals:
 rule build_heat_totals:
     input:
         hdd="data/bundle/era5-HDD-per-country.csv",
-        energy_totals=resources("energy_totals.csv"),
+        energy_totals=resources("energy_totals_{clusters}.csv"),
     output:
-        heat_totals=resources("heat_totals.csv"),
+        heat_totals=resources("heat_totals_{clusters}.csv"),
     threads: 1
     resources:
         mem_mb=2000,
     log:
-        logs("build_heat_totals.log"),
+        logs("build_heat_totals_{clusters}.log"),
     benchmark:
-        benchmarks("build_heat_totals")
+        benchmarks("build_heat_totals_{clusters}")
     conda:
         "../envs/environment.yaml"
     script:
@@ -1037,22 +1039,22 @@ rule build_industry_sector_ratios_intermediate:
     input:
         industry_sector_ratios=resources("industry_sector_ratios.csv"),
         industrial_energy_demand_per_country_today=resources(
-            "industrial_energy_demand_per_country_today.csv"
+            "industrial_energy_demand_per_country_today_{clusters}.csv"
         ),
         industrial_production_per_country=resources(
             "industrial_production_per_country.csv"
         ),
     output:
         industry_sector_ratios=resources(
-            "industry_sector_ratios_{planning_horizons}.csv"
+            "industry_sector_ratios_{clusters}_{planning_horizons}.csv"
         ),
     threads: 1
     resources:
         mem_mb=1000,
     log:
-        logs("build_industry_sector_ratios_{planning_horizons}.log"),
+        logs("build_industry_sector_ratios_{clusters}_{planning_horizons}.log"),
     benchmark:
-        benchmarks("build_industry_sector_ratios_{planning_horizons}")
+        benchmarks("build_industry_sector_ratios_{clusters}_{planning_horizons}")
     conda:
         "../envs/environment.yaml"
     script:
@@ -1176,7 +1178,7 @@ rule build_industrial_production_per_node:
 rule build_industrial_energy_demand_per_node:
     input:
         industry_sector_ratios=resources(
-            "industry_sector_ratios_{planning_horizons}.csv"
+            "industry_sector_ratios_{clusters}_{planning_horizons}.csv"
         ),
         industrial_production_per_node=resources(
             "industrial_production_base_s_{clusters}_{planning_horizons}.csv"
@@ -1214,22 +1216,22 @@ rule build_industrial_energy_demand_per_country_today:
         industry=config_provider("industry"),
         ammonia=config_provider("sector", "ammonia", default=False),
     input:
-        transformation_output_coke=resources("transformation_output_coke.csv"),
+        transformation_output_coke=resources("transformation_output_coke_{clusters}.csv"),
         jrc="data/jrc-idees-2021",
         industrial_production_per_country=resources(
             "industrial_production_per_country.csv"
         ),
     output:
         industrial_energy_demand_per_country_today=resources(
-            "industrial_energy_demand_per_country_today.csv"
+            "industrial_energy_demand_per_country_today_{clusters}.csv"
         ),
     threads: 8
     resources:
         mem_mb=2000,
     log:
-        logs("build_industrial_energy_demand_per_country_today.log"),
+        logs("build_industrial_energy_demand_per_country_today_{clusters}.log"),
     benchmark:
-        benchmarks("build_industrial_energy_demand_per_country_today")
+        benchmarks("build_industrial_energy_demand_per_country_today_{clusters}")
     conda:
         "../envs/environment.yaml"
     script:
@@ -1242,7 +1244,7 @@ rule build_industrial_energy_demand_per_node_today:
             "industrial_distribution_key_base_s_{clusters}.csv"
         ),
         industrial_energy_demand_per_country_today=resources(
-            "industrial_energy_demand_per_country_today.csv"
+            "industrial_energy_demand_per_country_today_{clusters}.csv"
         ),
     output:
         industrial_energy_demand_per_node_today=resources(
@@ -1296,7 +1298,7 @@ rule build_population_weighted_energy_totals:
         snapshots=config_provider("snapshots"),
         drop_leap_day=config_provider("enable", "drop_leap_day"),
     input:
-        energy_totals=resources("{kind}_totals.csv"),
+        energy_totals=resources("{kind}_totals_{clusters}.csv"),
         clustered_pop_layout=resources("pop_layout_base_s_{clusters}.csv"),
         wallon_demands = resources("wallon_demands_{planning_horizons}.csv"),
     output:
@@ -1319,7 +1321,7 @@ rule build_shipping_demand:
         ports="data/attributed_ports.json",
         scope=resources("europe_shape.geojson"),
         regions=resources("regions_onshore_base_s_{clusters}.geojson"),
-        demand=resources("energy_totals.csv"),
+        demand=resources("energy_totals_{clusters}.csv"),
         wallon_demands = resources("wallon_demands_{planning_horizons}.csv"),
     params:
         energy_totals_year=config_provider("energy", "energy_totals_year"),
@@ -1349,7 +1351,7 @@ rule build_transport_demand:
         pop_weighted_energy_totals=resources(
             "pop_weighted_energy_totals_s_{clusters}_{planning_horizons}.csv"
         ),
-        transport_data=resources("transport_data.csv"),
+        transport_data=resources("transport_data_{clusters}.csv"),
         traffic_data_KFZ="data/bundle/emobility/KFZ__count",
         traffic_data_Pkw="data/bundle/emobility/Pkw__count",
         temp_air_total=resources("temp_air_total_base_s_{clusters}.nc"),
@@ -1376,7 +1378,7 @@ rule build_district_heat_share:
         sector=config_provider("sector"),
         energy_totals_year=config_provider("energy", "energy_totals_year"),
     input:
-        district_heat_share=resources("district_heat_share.csv"),
+        district_heat_share=resources("district_heat_share_{clusters}.csv"),
         clustered_pop_layout=resources("pop_layout_base_s_{clusters}.csv"),
     output:
         district_heat_share=resources(
@@ -1595,7 +1597,7 @@ rule prepare_sector_network:
         transport_data=resources("transport_data_s_{clusters}_{planning_horizons}.csv"),
         avail_profile=resources("avail_profile_s_{clusters}_{planning_horizons}.csv"),
         dsm_profile=resources("dsm_profile_s_{clusters}_{planning_horizons}.csv"),
-        co2_totals_name=resources("co2_totals.csv"),
+        co2_totals_name=resources("co2_totals_{clusters}.csv"),
         co2="data/bundle/eea/UNFCCC_v23.csv",
         biomass_potentials=resources(
             "biomass_potentials_s_{clusters}_{planning_horizons}.csv"
@@ -1621,7 +1623,7 @@ rule prepare_sector_network:
         district_heat_share=resources(
             "district_heat_share_base_s_{clusters}_{planning_horizons}.csv"
         ),
-        heating_efficiencies=resources("heating_efficiencies.csv"),
+        heating_efficiencies=resources("heating_efficiencies_{clusters}.csv"),
         temp_soil_total=resources("temp_soil_total_base_s_{clusters}.nc"),
         temp_air_total=resources("temp_air_total_base_s_{clusters}.nc"),
         cop_profiles=resources("cop_profiles_base_s_{clusters}_{planning_horizons}.nc"),
