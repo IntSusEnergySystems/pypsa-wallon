@@ -9,7 +9,7 @@ coal,VAR_FIN,process_agg,process_agg,Fuel Tech - Hard Coal (IND);Fuel Tech - Lig
 coke,VAR_FIN,process_agg,process_agg,Fuel Tech - Coke (IND),pypsa_carrier,Coke for industry
 hydrogen,VAR_FIN,process_agg,process_agg,hydrogen for industry,pypsa_carrier,hydrogen for industry
 low-temperature heat,VAR_FIN,process_agg,process_agg,Geothermal (IND),pypsa_carrier,Heat for industry;Geothermal (IND)
-methane,VAR_FIN,process_agg,process_agg,Fuel Tech - Biogas (IND);Fuel Tech - Natural Gas transport (IND);Fuel Tech New - Gas and Cog industry (IND);Fuel Tech - Natural Gas and biogas mixed  (IND);Fuel Tech - Liquified Petroleum Gas (IND),pypsa_carrier,Natural Gas;Network gas;gas for industry;High Temperature Heat for IND
+methane,VAR_FIN,process_agg,process_agg,Fuel Tech - Biogas (IND);Fuel Tech - Natural Gas transport (IND);Fuel Tech New - Gas and Cog industry (IND);Fuel Tech - Natural Gas and biogas mixed  (IND);Fuel Tech - Liquified Petroleum Gas (IND);Fuel Tech New - biogaz epure (IND),pypsa_carrier,Natural Gas;Network gas;gas for industry;High Temperature Heat for IND
 methanol,VAR_FIN,combined,process_agg,Industry,pypsa_carrier,methanol
 naphtha,VAR_FIN,process_agg,process_agg,Non-energy;Fuel Tech - Heavy Fuel Oil (IND);Fuel Tech - Light Fuel Oil (IND),pypsa_carrier,naphtha;oil for industry
 solid biomass,VAR_FIN,process_agg,process_agg,Fuel Tech - Wood material (IND);Fuel Tech - Waste Renewable (IND);Fuel Tech - Wood CHIPS (IND);Fuel Tech - Biofuel (IND),pypsa_carrier,solid biomass for industry;Wood pellets for Industry
@@ -21,7 +21,7 @@ total domestic aviation,VAR_FOUT,combined,process_agg,domestic aviation,pypsa_ca
 total international aviation,VAR_FOUT,combined,process_agg,international aviation,pypsa_carrier,international aviation
 total domestic navigation,VAR_FOUT,combined,process_agg,domestic navigation,pypsa_carrier,domestic navigation
 total international navigation,VAR_FOUT,process_agg,process_agg,international navigation,,
-total road,VAR_FIN,process_agg,process_agg,Fuel Tech - Biodiesel (TRA);Fuel tech - biogas (TRA);Fuel Tech - Diesel (TRA);Fuel Tech - Ethanol (TRA);Fuel Tech - H2;Fuel Tech - Reseau gas mixed (TRA);Fuel Tech - Gasoline (TRA);Fuel Tech - Liquified Petroleum Gas (TRA);EV charger,,
+total road,VAR_FIN,process_agg,process_agg,Fuel Tech - Biodiesel (TRA);Fuel tech - biogas (TRA);Fuel Tech - Diesel (TRA);Fuel Tech - Ethanol (TRA);Fuel Tech - H2;Fuel Tech - Reseau gas mixed (TRA);Fuel Tech - Gasoline (TRA);Fuel Tech - Liquified Petroleum Gas (TRA);EV charger;Fuel Tech - Biogas (TRA);Fuel Tech - Natural Gas (TRA),,
 total rail,VAR_FIN,process_agg,process_agg,rail transport,,
 hydrogen road,VAR_FIN,combined,process_agg,Cars;Road Freight;2 and 3 wheelers;Road transport (public),pypsa_carrier,H2 for transport
 BEWAL residential urban decentral heat,VAR_FOUT,combined,process_agg,Residential urban decentral Coal heater;Residential urban decentral electric heater;Residential urban decentral Heat pump;Residential urban decentral geothermal heating;Residential urban decentral gas heater;Residential urban decentral biomass heater;Residential urban decentral solar thermal;Residential urban decentral oil heater,pypsa_carrier,Heat

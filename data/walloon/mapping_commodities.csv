@@ -173,3 +173,6 @@ COMCPS,Chips wood (COM),PJ,COM,NRG,Chips wood (COM),Chips wood (COM),,,auto-adde
 INDSOL,Solar (IND),PJ,IND,NRG,Solar (IND),Solar (IND),,,auto-added from AllCommodities.csv
 NEC,Non Energy Consumption - Chemicals,PJ,IND,DEM,Non-energy,naphtha,,,auto-added from AllCommodities.csv
 OILNAP,Naphtha,PJ,IND,NRG,Non-energy,naphtha,,,Added for industry sector
+TRAGAS,Fuel Tech - Natural Gas (TRA),PJ,TRA,DEM,total energy for transport,total energy for transport,,,
+TRAGZH,Fuel Tech - Biogas (TRA),PJ,TRA,DEM,total energy for transport,total energy for transport,,,
+INDGZH,Fuel Tech New - biogaz epure (IND),PJ,IND,DEM,gas for industry,gas for industry,,,
