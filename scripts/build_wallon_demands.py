@@ -757,6 +757,18 @@ def extract_pypsa_demands(annual_values_df,mapping, raw_flows_df, processes_df, 
         
     # Save to CSV
     results_df = pd.DataFrame(results)
+    road_raw = results_df[results_df['category'] == 'electricity road']['TWh'].iloc[0]
+    rail_raw = results_df[results_df['category'] == 'electricity rail']['TWh'].iloc[0]
+    net_road_twh = road_raw - rail_raw
+    net_road_pj = net_road_twh / 0.277778
+    results_df.loc[results_df['category'] == 'electricity road', 'TWh'] = net_road_twh
+    results_df.loc[results_df['category'] == 'electricity road', 'PJ'] = net_road_pj
+    road_tot = results_df[results_df['category'] == 'total road']['TWh'].iloc[0]
+    rail_tot = results_df[results_df['category'] == 'total rail']['TWh'].iloc[0]
+    tot_road_twh = road_tot - rail_tot
+    tot_road_pj = tot_road_twh / 0.277778
+    results_df.loc[results_df['category'] == 'total road', 'TWh'] = tot_road_twh
+    results_df.loc[results_df['category'] == 'total road', 'PJ'] = tot_road_pj
     results_df["year"] = planning_horizon
     output_file = snakemake.output.wallon_demands
     results_df.to_csv(output_file, index=False)
