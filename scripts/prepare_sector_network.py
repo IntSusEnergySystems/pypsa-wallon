@@ -241,7 +241,7 @@ def determine_emission_sectors(options):
             "domestic aviation",
             "international aviation",
             "domestic navigation",
-            "international navigation",
+            #"international navigation",
         ]
     if options["agriculture"]:
         sectors += ["agriculture"]
@@ -5344,13 +5344,10 @@ def add_shipping(
             f"Total shipping shares sum up to {total_share:.2%}, corresponding to increased or decreased demand assumptions."
         )
 
-    domestic_navigation = pop_weighted_energy_totals.loc[
-        nodes, ["total domestic navigation"]
-    ].squeeze()
-    international_navigation = (
+    domestic_navigation = (
         pd.read_csv(shipping_demand_file, index_col=0).squeeze(axis=1) * nyears
     )
-    all_navigation = domestic_navigation + international_navigation
+    all_navigation = domestic_navigation
     p_set = all_navigation * 1e6 / nhours
 
     if options["shipping"]:
