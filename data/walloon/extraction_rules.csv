@@ -21,7 +21,7 @@ total domestic aviation,VAR_FOUT,combined,process_agg,domestic aviation,pypsa_ca
 total international aviation,VAR_FOUT,combined,process_agg,international aviation,pypsa_carrier,international aviation
 total domestic navigation,VAR_FOUT,combined,process_agg,domestic navigation,pypsa_carrier,domestic navigation
 total international navigation,VAR_FOUT,process_agg,process_agg,international navigation,,
-total road,VAR_FIN,process_agg,process_agg,Fuel Tech - Biodiesel (TRA);Fuel tech - biogas (TRA);Fuel Tech - Diesel (TRA);Fuel Tech - Ethanol (TRA);Fuel Tech - H2;Fuel Tech - Reseau gas mixed (TRA);Fuel Tech - Gasoline (TRA);Fuel Tech - Liquified Petroleum Gas (TRA);Fuel Tech - Biogas (TRA);Fuel Tech - Natural Gas (TRA);Fuel Tech - Electricity (TRA);TRA_STG_PJ_GW,,
+total road,VAR_FIN,process_agg,process_agg,Fuel Tech - Biodiesel (TRA);Fuel Tech - Biogas (TRA);Fuel Tech - Diesel (TRA);Fuel Tech - Ethanol (TRA);Fuel Tech - H2;Fuel Tech - Reseau gas mixed (TRA);Fuel Tech - Gasoline (TRA);Fuel Tech - Liquified Petroleum Gas (TRA);BioGas (TAR);Fuel Tech - Natural Gas (TRA);Fuel Tech - Electricity (TRA);TRA_STG_PJ_GW,,
 total rail,VAR_FIN,process_agg,process_agg,rail transport,,
 hydrogen road,VAR_FIN,combined,process_agg,Cars;Road Freight;2 and 3 wheelers;Road transport (public),pypsa_carrier,H2 for transport
 BEWAL residential urban decentral heat,VAR_FOUT,combined,process_agg,Residential urban decentral Coal heater;Residential urban decentral electric heater;Residential urban decentral Heat pump;Residential urban decentral geothermal heating;Residential urban decentral gas heater;Residential urban decentral biomass heater;Residential urban decentral solar thermal;Residential urban decentral oil heater,pypsa_carrier,Heat

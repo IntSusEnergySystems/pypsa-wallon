@@ -119,7 +119,7 @@ RLIG,Rsd.Lighting.Existing.,PJ,RSD,,electricity for residential,Electricity ,nan
 RREF,Rsd.Refrigeration.Existing.,PJ,RSD,,electricity for residential,electricity for residential,nan,nan,nan
 ROEN,Rsd.Other Energy.Existing.,PJ,RSD,,electricity for residential,electricity for residential,nan,nan,nan
 ROEL,Rsd.Other Electric.Existing.,PJ,RSD,,electricity for residential,electricity for residential,nan,nan,nan
-TRALPG,Fuel Tech - Liquified Petroleum Gas,PJ,TRA,,total energy for transport,total energy for transport,nan,nan,nan
+TRALPG,Fuel Tech - Liquified Petroleum Gas (TRA),PJ,TRA,,total energy for transport,total energy for transport,nan,nan,nan
 TNDF,Navigation Domestic Freight Tech Existing,PJ,TRA,,domestic navigation,domestic navigation,nan,nan,nan
 AGRCPS,Wood for agriculture,PJ,AGR,,Wood for agriculture,Wood for agriculture,nan,nan,nan
 CHBA,Space heating for commercial sector,PJ,COM,,BEWAL services urban decentral heat,Heat,nan,nan,nan
@@ -173,6 +173,6 @@ INDSOL,Solar (IND),PJ,IND,NRG,Solar (IND),Solar (IND),,,auto-added from AllCommo
 NEC,Non Energy Consumption - Chemicals,PJ,IND,DEM,Non-energy,naphtha,,,auto-added from AllCommodities.csv
 OILNAP,Naphtha,PJ,IND,NRG,Non-energy,naphtha,,,Added for industry sector
 TRAGAS,Fuel Tech - Natural Gas (TRA),PJ,TRA,DEM,total energy for transport,total energy for transport,,,
-TRAGZH,Fuel Tech - Biogas (TRA),PJ,TRA,DEM,total energy for transport,total energy for transport,,,
+TRAGZH,BioGas (TAR),PJ,TRA,DEM,total energy for transport,total energy for transport,,,
 INDGZH,Fuel Tech New - biogaz epure (IND),PJ,IND,DEM,gas for industry,gas for industry,,,
 BATELCOUT,TSTGEVCMIDN01,PJ,TRA,DEM,total energy for transport,Electricity ,,,
