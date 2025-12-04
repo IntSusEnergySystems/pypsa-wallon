@@ -7,7 +7,7 @@ electricity,VAR_FIN,process_agg,process_agg,PV industrial;Fuel Tech - Electricit
 ammonia,VAR_FIN,combined,process_agg,Industry,pypsa_carrier,ammonia
 coal,VAR_FIN,process_agg,process_agg,Fuel Tech - Hard Coal (IND);Fuel Tech - Lignite (IND),pypsa_carrier,coal for industry
 coke,VAR_FIN,process_agg,process_agg,Fuel Tech - Coke (IND),pypsa_carrier,Coke for industry
-hydrogen,VAR_FIN,process_agg,process_agg,hydrogen for industry,pypsa_carrier,hydrogen for industry
+hydrogen,VAR_FIN,process_agg,process_agg,hydrogen for industry;hydrogen imports,pypsa_carrier,hydrogen for industry
 low-temperature heat,VAR_FIN,process_agg,process_agg,Geothermal (IND),pypsa_carrier,Heat for industry;Geothermal (IND)
 methane,VAR_FIN,process_agg,process_agg,Fuel Tech - Biogas (IND);Fuel Tech - Natural Gas transport (IND);Fuel Tech New - Gas and Cog industry (IND);Fuel Tech - Natural Gas and biogas mixed  (IND);Fuel Tech - Liquified Petroleum Gas (IND);Fuel Tech New - biogaz epure (IND),pypsa_carrier,Natural Gas;Network gas;gas for industry;High Temperature Heat for IND
 methanol,VAR_FIN,combined,process_agg,Industry,pypsa_carrier,methanol
