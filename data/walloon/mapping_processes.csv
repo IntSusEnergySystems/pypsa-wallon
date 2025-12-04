@@ -473,7 +473,7 @@ INDGAS00,Fuel Tech - Natural Gas transport,IND,.PRE.,Fuel Tech - Natural Gas tra
 INDGASCOG01,Fuel Tech New - Gas and Cog industry,IND,.PRE.,Fuel Tech New - Gas and Cog industry (IND),PJ,PJA,PRE,INDGASCOG,ANNUAL,"1,00",Fuel Tech New - Gas and Cog industry,Fuel Tech New - Gas and Cog industry (IND)
 INDGEO00,Geothermal (IND),IND,.PRE.,Geothermal (IND),PJ,PJA,PRE,INDGEO,ANNUAL,"0,00",Geothermal (IND),Geothermal (IND)
 INDGH2C01,hydrogen for industry,SUP,.PRE.,Fuel Tech - H2 Delivery from centralized production (COMP+TR+DP - Industrial),PJ,PJ-A,PRE,INDHH2,DAYNITE,,hydrogen for industry,hydrogen for industry
-INDGH2C01_i,hydrogen imports,SUP,.PRE.,INDGH2C01_i,PJ,PJ-A,PRE,INDHH2,DAYNITE,,Imports,Imports
+INDGH2C01_i,Imports,SUP,.PRE.,INDGH2C01_i,PJ,PJ-A,PRE,INDHH2,DAYNITE,,Imports,hydrogen imports
 INDGMX00,Fuel Tech - Natural Gas and biogas mixed,IND,.PRE.,Fuel Tech - Natural Gas and biogas mixed  (IND),PJ,PJA,PRE,INDGMX,ANNUAL,"0,00",Fuel Tech - Natural Gas and biogas mixed,Fuel Tech - Natural Gas and biogas mixed  (IND)
 INDHFO00,Fuel Tech - Heavy Fuel Oil ,IND,.PRE.,Fuel Tech - Heavy Fuel Oil (IND),PJ,PJA,PRE,INDHFO,ANNUAL,"0,00",Fuel Tech - Heavy Fuel Oil ,Fuel Tech - Heavy Fuel Oil (IND)
 INDHTH00,Fuel Tech - Heat,IND,.PRE.,industry high temperature heat,PJ,PJA,PRE,INDHET,ANNUAL,"0,00",Fuel Tech - Heat,Fuel Tech - Heat
