@@ -3,21 +3,31 @@ Walloon Specific Changes
 
 The Walloon workflow includes several changes to the default PyPSA-Eur:
 
+* **Multi-scenario configuration.** ``config/config.times-pypsa.yaml`` enables wildcard-based 
+  Walloon runs and points to ``config/scenarios.walloon.yaml``. The scenario file wires each 
+  scenario name to its TIMES demand file and to the matching Walloon potentials, cost set, and 
+  aggregated minimum and maximum capacities at the carrier level (``agg_p_nom_minmax_*``).
 * **Nuclear capacity expansion**: The `electricity.extendable_nuclear_links` is added to the 
   Walloon configuration in ``config/config.walloon.yaml`` to allow new nuclear capacity 
   to be built as extendable links, for the nodes and horizons specified. Additionally, 
   planned nuclear power plants can be added to ``data/custom_powerplants.csv``. 
 * **Custom potentials for BEWAL.** The Walloon configuration uses custom potentials 
-  for various energy resources, defined in  ``data/walloon/custom_potentials.csv``. 
-  These potentials set maximum limits for solid biomass (imported, transported, and local production)
-  in terms of annual energy (GWh/an). There are also maximum potentials for onshore wind, solar PV, 
-  and rooftop solar PV in the BEWAL region, defined in MW. These custom potentials are activated
-  via the `electricity.walloon_potentials` parameter in the Walloon configuration 
-  ``config/config.walloon.yaml``.
+  for various energy resources, defined in  ``data/walloon/custom_potentials.csv`` and 
+  scenario-specific variants: ``custom_potentials_corrige.csv``, 
+  ``custom_potentials_imppel.csv``, ``custom_potentials_alternatif.csv``, and 
+  ``custom_potentials_alternatif_biolow.csv``. These files set maximum limits for solid biomass 
+  (imports, transported, and local production), onshore wind, solar PV, rooftop PV, and selected 
+  heat potentials. The relevant CSV is selected via `electricity.walloon_potentials` through 
+  ``config/scenarios.walloon.yaml``.
 * **Custom cost data.** The Walloon configuration uses updated cost assumptions 
-  for specified fuels and technologies. These custom values are provided in 
-  ``data/walloon/custom_costs_rc.csv`` and activated via the `costs.custom_cost_fn` 
-  parameter in the Walloon configuration ``config/config.walloon.yaml``. 
+  for specified fuels and technologies. The base file remains 
+  ``data/walloon/custom_costs_rc.csv``; additional scenario variants include 
+  ``custom_costs_corrige.csv`` and nuclear CAPEX sensitivities 
+  ``custom_costs_nuc11500.csv`` and ``custom_costs_nuc13500.csv``. The scenario config 
+  selects the appropriate file through `costs.custom_cost_fn`.
+* **Aggregated capacity minimum and maximums.** Scenario-specific capacity limits in 
+  ``data/walloon/agg_p_nom_minmax_base.csv`` and ``data/walloon/agg_p_nom_minmax_corrige.csv`` 
+  refine the minimum/maximum nominal capacities used when enforcing aggregated capacity limits.
 * **Custom power plants retirements.** The Walloon (BEWAL) nuclear power plant, Tihange, 
   is now defined in ``data/custom_powerplants.csv`` with as 3 separate units
   (Tihange 1/2/3) to allow the plant to retire its capacity incrementally. 
