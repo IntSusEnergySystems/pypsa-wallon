@@ -48,3 +48,5 @@ With these adjustments the Walloon run retires the Tihange power plant increment
 at their scheduled dates, removes duplicate representation of nuclear, and only allows
 new Belgian nuclear capacity when the config explicitly enables it.
 
+TIMES-PyPSA demand interlinkage
+===============================
