@@ -1,5 +1,6 @@
+########################
 Walloon Specific Changes
-========================
+########################
 
 The Walloon workflow includes several changes to the default PyPSA-Eur:
 
@@ -46,3 +47,4 @@ The Walloon workflow includes several changes to the default PyPSA-Eur:
 With these adjustments the Walloon run retires the Tihange power plant incrementally 
 at their scheduled dates, removes duplicate representation of nuclear, and only allows
 new Belgian nuclear capacity when the config explicitly enables it.
+
