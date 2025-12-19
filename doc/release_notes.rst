@@ -10,6 +10,8 @@ Release Notes
 PyPSA-WAL Upcoming Release
 ==========================
 
+* Add config file (`config/config.times-pypsa.yaml`), scenarios file (`config/scenarios.walloon.yaml`), 
+  and input data files (CSVs in `data/walloon/`) to run the multiple Walloon scenarios for sensitivity analysis.
 * The capital costs of nuclear retrofitting has been corrected to account for 
   the efficiency of the link. Additionally, the nuclear retrofitting has been changed 
   to an LP problem instead of MILP to improve solve times. Regional coal demand has been activated,
