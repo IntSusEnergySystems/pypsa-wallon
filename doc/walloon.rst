@@ -5,8 +5,11 @@ The Walloon workflow includes several changes to the default PyPSA-Eur:
 
 * **Multi-scenario configuration.** ``config/config.times-pypsa.yaml`` enables wildcard-based 
   Walloon runs and points to ``config/scenarios.walloon.yaml``. The scenario file wires each 
-  scenario name to its TIMES demand file and to the matching Walloon potentials, cost set, and 
-  aggregated minimum and maximum capacities at the carrier level (``agg_p_nom_minmax_*``).
+  scenario name to a TIMES demand file (via `sector.times_file`) and to the matching custom 
+  potentials, cost set, and aggregated carrier-level minimum and maximum capacities for each scenario.
+* **Configuration options to trigger TIMES-adjusted demands.** The TIMES-PyPSA demand interlinkage 
+  is activated in the Walloon  configuration by setting `sector.times_demand` to `true` and pointing 
+  to a TIMES output file via `sector.times_file`. 
 * **Nuclear capacity expansion**: The `electricity.extendable_nuclear_links` is added to the 
   Walloon configuration in ``config/config.walloon.yaml`` to allow new nuclear capacity 
   to be built as extendable links, for the nodes and horizons specified. Additionally, 
