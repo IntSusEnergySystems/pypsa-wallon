@@ -4,11 +4,20 @@
 
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#run
 run:
-  name: "walloon-model"
+  prefix: "times-pypsa"
+  name:
+  - scen_base
+  - scen_corrige
+  - scen_nuc13500
+  - scen_nuc11500
+  - scen_imppel
+  - scen_data
   wallon_node: BEWAL
   flemish_node: BEVLG
   scenarios:
-    file: config/scenarios.yaml
+    enable: true
+    file: config/scenarios.walloon.yaml
+  shared_cutouts: true
 
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#foresight
 foresight: myopic
@@ -40,6 +49,7 @@ electricity:
   custom_powerplants: True
   walloon_reassignment: True
   walloon_potentials: data/walloon/custom_potentials.csv
+  retrofit_nuclear_once: true
 
   extendable_carriers:
     extendable_nuclear_links:
@@ -53,8 +63,8 @@ electricity:
   transmission_limit: v1.0
   transmission_limit_myopic:
     2030: v1.0
-    2040: v1.1
-    2050: v1.1
+    2040: v1.0
+    2050: v1.0
   apply_ntc_constraints: True
 
 # docs
@@ -175,7 +185,6 @@ costs:
   custom_cost_fn: data/walloon/custom_costs_rc.csv
 
 solving:
-  mem_mb: 32000
   agg_p_nom_limits:
     agg_offwind: true
     agg_solar: true

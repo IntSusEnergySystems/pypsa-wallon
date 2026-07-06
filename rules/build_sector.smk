@@ -27,10 +27,10 @@ rule build_population_layouts:
 
 rule build_wallon_demands:
     params:
-        study=config_provider("run", "name"),  
+        study=lambda w: getattr(w, "run", config.get("run", {}).get("name", "")),
     input:
         pop_layout_rural=resources("pop_layout_rural.nc"),
-        vd_file="data/walloon/scen_base_coherence_3110.vd",
+        times_file=config_provider("sector", "times_file"),
         process_mapping_file="data/walloon/mapping_processes.csv",
         mapping_file="data/walloon/mapping_commodities.csv",
         extraction_rules_file = "data/walloon/extraction_rules.csv",

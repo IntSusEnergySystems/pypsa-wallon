@@ -229,3 +229,5 @@ imports,,,
 -- limit_sense,--,"{==, <=, >=}",Sense of the limit
 -- price,,"{H2, NH3, methanol, gas, oil}",
 -- -- {carrier},currency/MWh,float,Price for importing renewable energy of carrier
+times_demand,--,"{true, false}","Use TIMES-format demand inputs instead of endogenous transport demand; if true, load demand from ``times_file``."
+times_file,--,str,Path to the TIMES demand file used when ``times_demand`` is true.

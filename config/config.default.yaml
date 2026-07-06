@@ -490,6 +490,8 @@ existing_capacities:
 
 # docs in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#sector
 sector:
+  times_demand: false
+  times_file: data/walloon/scen_base_coherence_3110.vd
   transport: true
   heating: true
   biomass: true

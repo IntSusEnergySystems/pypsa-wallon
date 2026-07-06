@@ -10,6 +10,10 @@ Release Notes
 PyPSA-WAL Upcoming Release
 ==========================
 
+* Add config file (`config/config.times-pypsa.yaml`), scenarios file (`config/scenarios.walloon.yaml`), 
+  and input data files (CSVs in `data/walloon/`) to run the multiple Walloon scenarios for sensitivity analysis.
+* Add `sector.times_demand` and `sector.times_file` config options to allow for flexible triggering of TIMES-PyPSA interlinkage. 
+  When `sector.times_demand` is set to `true`, the model will read in TIMES-PyPSA demand time series from the specified `sector.times_file`.
 * The capital costs of nuclear retrofitting has been corrected to account for 
   the efficiency of the link. Additionally, the nuclear retrofitting has been changed 
   to an LP problem instead of MILP to improve solve times. Regional coal demand has been activated,
